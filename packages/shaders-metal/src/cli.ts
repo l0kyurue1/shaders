@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { checkTools } from './doctor.ts';
@@ -6,6 +6,13 @@ import { buildAll } from './build.ts';
 import { loadManifest, findShader } from './mcp/manifest-load.ts';
 import { renderSkill } from './mcp/skill.ts';
 import { buildSnippet } from './mcp/snippet.ts';
+
+function referenceCopyHeader(): string {
+  return (
+    '// Reference copy — PaperShadersMetal renders its own bundled copy of this shader.\n' +
+    '// This file is for reading and porting, not for the app to load directly.\n\n'
+  );
+}
 
 const command = process.argv[2];
 
@@ -69,7 +76,24 @@ if (command === 'doctor') {
     { stdout: 'inherit', stderr: 'inherit' }
   );
   process.exit(await proc.exited);
+} else if (command === 'export') {
+  const outFlag = process.argv.indexOf('--out');
+  const outDir = outFlag !== -1 ? process.argv[outFlag + 1] : join(import.meta.dir, '../exports');
+  const manifest = loadManifest();
+  const dist = join(import.meta.dir, '../dist');
+  mkdirSync(outDir, { recursive: true });
+  writeFileSync(join(outDir, 'vertex.metal'), referenceCopyHeader() + readFileSync(join(dist, 'vertex.metal'), 'utf8'));
+  for (const shader of manifest.shaders) {
+    const dir = join(outDir, shader.id);
+    mkdirSync(dir, { recursive: true });
+    const metalSource = readFileSync(join(dist, `${shader.id}.metal`), 'utf8');
+    writeFileSync(join(dir, `${shader.id}.metal`), referenceCopyHeader() + metalSource);
+    const defaults = Object.fromEntries(shader.params.map((p) => [p.name, p.default]));
+    writeFileSync(join(dir, `${shader.id}.swift`), buildSnippet(shader, defaults));
+  }
+  console.log(`exported ${manifest.shaders.length} shaders (metal + swift, default params) -> ${outDir}`);
+  process.exit(0);
 } else {
-  console.error('Usage: bun run src/cli.ts <doctor|build|skill|typecheck-snippet>');
+  console.error('Usage: bun run src/cli.ts <doctor|build|skill|typecheck-snippet|export>');
   process.exit(1);
 }

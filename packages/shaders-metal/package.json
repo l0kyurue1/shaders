@@ -9,7 +9,8 @@
     "mcp": "bun run src/mcp-server.ts",
     "skill": "bun run src/cli.ts skill",
     "test": "bun test",
-    "typecheck-snippet": "bun run src/cli.ts typecheck-snippet"
+    "typecheck-snippet": "bun run src/cli.ts typecheck-snippet",
+    "export": "bun run src/cli.ts export"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

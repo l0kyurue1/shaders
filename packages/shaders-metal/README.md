@@ -47,3 +47,9 @@ param semantics for all shaders) after any shader change:
 ```bash
 bun run build && bun run skill
 ```
+
+## Future direction
+
+A SwiftUI Shader / `[[stitchable]]` export flavor would let developers use a
+shader with zero package dependency. Requires moving vertex-stage UV math to
+CPU and flattening params to arguments. Effort: L, not started.

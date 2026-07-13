@@ -33,3 +33,4 @@ packages/shaders-metal/dist/
 # App bundle build output
 dist-app/
 .build/
+packages/shaders-metal/exports/
