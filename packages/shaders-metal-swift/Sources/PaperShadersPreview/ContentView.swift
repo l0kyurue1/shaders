@@ -13,10 +13,16 @@ struct ContentView: View {
     init() {
         distURL = DistLocator.locate()
         manifest = distURL.flatMap { try? Manifest.load(distURL: $0) }
-        // …/Sources/PaperShadersPreview/ContentView.swift → up 3 = package root
+        // …/Sources/PaperShadersPreview/ContentView.swift → up 3 = package root.
+        // #filePath is baked at compile time; in a distributed .app the build
+        // machine's source tree doesn't exist, so fall back to Application Support.
         let packageRoot = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let store = SessionStore(directory: packageRoot.appendingPathComponent("session"))
+        let sessionDir = FileManager.default.fileExists(atPath: packageRoot.path)
+            ? packageRoot.appendingPathComponent("session")
+            : FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("PaperShadersMetal/session")
+        let store = SessionStore(directory: sessionDir)
         _store = State(initialValue: store)
         // launch selection: last session's shader if valid, else first shader in sidebar order
         if let manifest {
