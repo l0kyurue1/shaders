@@ -27,3 +27,10 @@ cypress/screenshots
 
 # So devs can maintain their own todo lists in the project
 TODO.md
+
+packages/shaders-metal/dist/
+
+# App bundle build output
+dist-app/
+.build/
+packages/shaders-metal/exports/

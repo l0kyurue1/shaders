@@ -1,0 +1,21 @@
+{
+  "name": "@paper-design/shaders-metal",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run src/cli.ts build",
+    "doctor": "bun run src/cli.ts doctor",
+    "mcp": "bun run src/mcp-server.ts",
+    "skill": "bun run src/cli.ts skill",
+    "test": "bun test",
+    "typecheck-snippet": "bun run src/cli.ts typecheck-snippet",
+    "export": "bun run src/cli.ts export"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@paper-design/shaders": "workspace:*",
+    "@paper-design/shaders-react": "workspace:*",
+    "zod": "^4.4.3"
+  }
+}

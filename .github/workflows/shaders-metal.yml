@@ -1,0 +1,61 @@
+name: shaders-metal
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/shaders/**'
+      - 'packages/shaders-metal/**'
+      - 'packages/shaders-metal-swift/**'
+      - '.github/workflows/shaders-metal.yml'
+  pull_request:
+    paths:
+      - 'packages/shaders/**'
+      - 'packages/shaders-metal/**'
+      - 'packages/shaders-metal-swift/**'
+
+concurrency:
+  group: shaders-metal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  golden-gate:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install shader tools
+        run: brew install glslang spirv-tools spirv-cross
+      - run: bun install
+      - name: Doctor
+        run: cd packages/shaders-metal && bun run doctor
+      - name: Build dist artifacts
+        run: cd packages/shaders-metal && bun run build
+      - name: Tests (includes 29/29 golden gate)
+        run: cd packages/shaders-metal && bun test
+
+  swift-runtime:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install shader tools
+        run: brew install glslang spirv-tools spirv-cross
+      - run: bun install
+      - name: Build dist artifacts
+        run: cd packages/shaders-metal && bun run build
+      - name: Bundled shader resources freshness
+        run: |
+          scripts/sync-dist.sh
+          git diff --exit-code -- packages/shaders-metal-swift/Sources/PaperShadersMetal/Resources/PrecompiledShaders
+      - name: Skill doc freshness
+        run: |
+          cd packages/shaders-metal && bun run skill
+          git diff --exit-code ../../.claude/skills/paper-shaders-metal/SKILL.md
+      - name: Swift build
+        run: cd packages/shaders-metal-swift && swift build
+      - name: iOS library build
+        run: cd packages/shaders-metal-swift && xcodebuild build -scheme PaperShadersMetal -destination 'generic/platform=iOS' -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO
+      - name: Snippet typecheck
+        run: cd packages/shaders-metal && bun run typecheck-snippet
+      - name: Swift tests
+        run: cd packages/shaders-metal-swift && swift test
