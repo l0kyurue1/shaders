@@ -1,6 +1,7 @@
 name: shaders-metal
 on:
   push:
+    branches: [main]
     paths:
       - 'packages/shaders/**'
       - 'packages/shaders-metal/**'
