@@ -37,6 +37,8 @@ final class ParamsModel {
     /// motion param (no uniform) that's always shown; `frame` stays hidden.
     func isVisible(_ p: ParamEntry) -> Bool {
         if p.isRuntimeOnly { return p.name == ParamEntry.speedName }
+        // Pattern shaders default fit to "none"; the picker drops "none" so it would render "—".
+        if p.name == "fit", p.default == .string("none") { return false }
         return renderer.usedUniforms.contains(p.uniform!)
     }
 
