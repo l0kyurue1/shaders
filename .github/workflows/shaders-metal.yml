@@ -42,12 +42,18 @@ jobs:
       - run: bun install
       - name: Build dist artifacts
         run: cd packages/shaders-metal && bun run build
+      - name: Bundled shader resources freshness
+        run: |
+          scripts/sync-dist.sh
+          git diff --exit-code -- packages/shaders-metal-swift/Sources/PaperShadersMetal/Resources/PrecompiledShaders
       - name: Skill doc freshness
         run: |
           cd packages/shaders-metal && bun run skill
           git diff --exit-code ../../.claude/skills/paper-shaders-metal/SKILL.md
       - name: Swift build
         run: cd packages/shaders-metal-swift && swift build
+      - name: iOS library build
+        run: cd packages/shaders-metal-swift && xcodebuild build -scheme PaperShadersMetal -destination 'generic/platform=iOS' -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO
       - name: Snippet typecheck
         run: cd packages/shaders-metal && bun run typecheck-snippet
       - name: Swift tests
