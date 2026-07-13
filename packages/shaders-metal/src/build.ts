@@ -5,6 +5,8 @@ import { extractShaders, extractVertexShader } from './extract.ts';
 import { compileToMetal } from './pipeline.ts';
 import { buildManifest } from './manifest.ts';
 import { parseVaryingLocations, remapFragmentVaryings } from './varyings.ts';
+import { renameParamsArg } from './rename-params.ts';
+import { shortenFloatLiterals } from './shorten-floats.ts';
 
 export type BuildSummary = {
   total: number;
@@ -36,6 +38,8 @@ export async function buildAll(distDir: string): Promise<BuildSummary> {
         } else if (canonical) {
           metalSource = remapFragmentVaryings(metalSource, canonical);
         }
+        metalSource = renameParamsArg(metalSource);
+        metalSource = shortenFloatLiterals(metalSource);
         await Bun.write(join(distDir, `${job.id}.metal`), metalSource);
         summary.succeeded.push(job.id);
       } else {

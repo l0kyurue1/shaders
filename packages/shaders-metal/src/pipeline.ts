@@ -20,7 +20,6 @@ export async function compileToMetal(
 ): Promise<CompileResult> {
   const glslPath = join(workDir, `${id}.${stage}`);
   const spvPath = `${glslPath}.spv`;
-  const optPath = `${glslPath}.opt.spv`;
   const metalPath = join(workDir, `${id}.metal`);
   const airPath = join(workDir, `${id}.air`);
   const errors: string[] = [];
@@ -29,8 +28,7 @@ export async function compileToMetal(
 
   const steps: [string, string[]][] = [
     ['glslang', ['glslang', '-G', '--auto-map-bindings', '--auto-map-locations', glslPath, '-o', spvPath]],
-    ['spirv-opt', ['spirv-opt', '--merge-return', '--inline-entry-points-exhaustive', '--eliminate-dead-code-aggressive', spvPath, '-o', optPath]],
-    ['spirv-cross', ['spirv-cross', '--msl', optPath, '--output', metalPath]],
+    ['spirv-cross', ['spirv-cross', '--msl', spvPath, '--output', metalPath]],
     ['metal-validate', ['xcrun', '-sdk', 'macosx', 'metal', '-c', metalPath, '-o', airPath]],
   ];
 
