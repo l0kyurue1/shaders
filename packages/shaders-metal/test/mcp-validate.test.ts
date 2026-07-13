@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import { findShader, loadManifest } from '../src/mcp/manifest-load.ts';
 import { defaultParamsFor, validateAndCoerceParams } from '../src/mcp/validate.ts';
+import { hasDist } from './env.ts';
 
-const warp = findShader(loadManifest(), 'warp')!;
+const warp = hasDist ? findShader(loadManifest(), 'warp')! : (null as any);
 
-describe('validateAndCoerceParams', () => {
+describe.skipIf(!hasDist)('validateAndCoerceParams', () => {
   test('clamps above max (scale 99 -> 4)', () => {
     const r = validateAndCoerceParams(warp, { scale: 99 });
     expect(r.ok).toBe(true);
@@ -65,7 +66,7 @@ describe('validateAndCoerceParams', () => {
   });
 });
 
-describe('defaultParamsFor', () => {
+describe.skipIf(!hasDist)('defaultParamsFor', () => {
   test('returns dict containing scale and shape', () => {
     const d = defaultParamsFor(warp);
     expect(d).toHaveProperty('scale');

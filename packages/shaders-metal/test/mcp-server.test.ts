@@ -4,7 +4,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import { buildServer } from '../src/mcp-server.ts';   // export a factory: buildServer(sessionPath?) -> McpServer
+import { buildServer } from '../src/mcp-server.ts';
+import { hasDist } from './env.ts';
 
 async function connect(sessionPath: string) {
   const server = buildServer(sessionPath);
@@ -16,7 +17,7 @@ async function connect(sessionPath: string) {
 }
 const parse = (r: any) => JSON.parse(r.content[0].text);
 
-describe('mcp server e2e', () => {
+describe.skipIf(!hasDist)('mcp server e2e', () => {
   let sessionPath: string, client: Awaited<ReturnType<typeof connect>>;
   beforeAll(async () => {
     sessionPath = join(await mkdtemp(join(tmpdir(),'mcp-')), 'params.json');

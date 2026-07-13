@@ -4,8 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildAll } from '../src/build.ts';
 import { parseVaryingLocations } from '../src/varyings.ts';
+import { hasMetalToolchain } from './env.ts';
 
-describe('build', () => {
+describe.skipIf(!hasMetalToolchain)('build', () => {
   test('converts the full catalog: 29/29 + vertex + manifest', async () => {
     const dist = await mkdtemp(join(tmpdir(), 'shaders-metal-dist-'));
     const summary = await buildAll(dist);

@@ -1,8 +1,9 @@
 import { expect, test } from 'bun:test';
 import { loadManifest } from '../src/mcp/manifest-load.ts';
 import { renderSkill } from '../src/mcp/skill.ts';
+import { hasDist } from './env.ts';
 
-test('renderSkill covers all shaders with enum options and numeric ranges', () => {
+test.skipIf(!hasDist)('renderSkill covers all shaders with enum options and numeric ranges', () => {
   const m = loadManifest();
   const md = renderSkill(m);
 

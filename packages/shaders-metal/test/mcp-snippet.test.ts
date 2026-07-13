@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 import { loadManifest, findShader } from '../src/mcp/manifest-load.ts';
 import { buildSnippet } from '../src/mcp/snippet.ts';
+import { hasDist } from './env.ts';
 
-describe('snippet', () => {
-  const warp = findShader(loadManifest(), 'warp')!;
+describe.skipIf(!hasDist)('snippet', () => {
+  const warp = hasDist ? findShader(loadManifest(), 'warp')! : (null as any);
 
   test('bakes params and SPM install into a SwiftUI snippet', () => {
     const s = buildSnippet(warp, { scale: 2.5, shape: 'stripes' });

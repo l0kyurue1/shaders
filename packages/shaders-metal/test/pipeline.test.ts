@@ -4,8 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { compileToMetal } from '../src/pipeline.ts';
 import { extractShaders, extractVertexShader } from '../src/extract.ts';
+import { hasMetalToolchain } from './env.ts';
 
-describe('pipeline', () => {
+describe.skipIf(!hasMetalToolchain)('pipeline', () => {
   test('simplex-noise compiles to validated Metal', async () => {
     const workDir = await mkdtemp(join(tmpdir(), 'shaders-metal-'));
     const shader = (await extractShaders()).find((s) => s.id === 'simplex-noise')!;
