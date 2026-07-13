@@ -2,7 +2,7 @@ import Foundation
 
 public enum DistLocator {
     /// Resolution order: PAPER_SHADERS_DIST env override; a `dist` folder bundled in
-    /// the app's Resources (distributed .app, see scripts/make-app-bundle.sh); walk up
+    /// the app's Resources (distributed .app, see the release repo's scripts/make-app-bundle.sh); walk up
     /// from this source file (packages/shaders-metal-swift/Sources/...) to the repo
     /// root and append packages/shaders-metal/dist (monorepo dev — freshest during
     /// active shader work); else the PrecompiledShaders resource bundled into the

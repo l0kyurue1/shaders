@@ -8,38 +8,21 @@ against the web reference.
 Not a bun workspace member — the root `package.json` lists workspaces
 explicitly, so this directory is inert to bun. Never add it to that list.
 
-![Paper Shaders Metal showcase](./assets/preview.gif)
+![Paper Shaders Metal showcase](https://raw.githubusercontent.com/l0kyurue1/paper-shaders-metal/main/assets/preview.gif)
 
 Eight of the 29 shaders, rendered by the same runtime:
 
-![Shader effects rendered offscreen](./assets/preview-metal.gif)
+![Shader effects rendered offscreen](https://raw.githubusercontent.com/l0kyurue1/paper-shaders-metal/main/assets/preview-metal.gif)
 
-## Install the preview app (no toolchain needed)
+## Distribution
 
-macOS 14+, universal binary, free/unsigned (ad-hoc signature):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/l0kyurue1/shaders/main/install.sh | bash
-```
-
-Rerun the same command to update. Uninstall:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/l0kyurue1/shaders/main/install.sh | bash -s -- --uninstall
-```
-
-Manual alternative: download `PaperShadersMetal-*.zip` from
-[Releases](https://github.com/l0kyurue1/shaders/releases), unzip, drag the
-app to Applications. Browser downloads get the quarantine xattr (curl does
-not), so clear it once or Gatekeeper will refuse the unsigned app:
-
-```bash
-xattr -rd com.apple.quarantine "/Applications/Paper Shaders Metal.app"
-```
-
-Release engineering: `scripts/make-app-bundle.sh <version>` (repo root)
-builds the universal .app + zip; pushing a `preview-v*` tag publishes it as
-a GitHub Release via `.github/workflows/release-preview-app.yml`.
+Consumers install from the standalone release repo
+[**l0kyurue1/paper-shaders-metal**](https://github.com/l0kyurue1/paper-shaders-metal):
+SPM package at its root, preview-app releases on `v*` tags, and `install.sh`.
+This directory is the source of truth; `scripts/export-release.sh` (repo root)
+syncs `dist/` into `PrecompiledShaders/` and mirrors `Package.swift` +
+`Sources/` + `Tests/` over. Never hand-edit the mirrored set in the release
+repo.
 
 ## Prerequisites
 

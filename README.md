@@ -4,19 +4,17 @@
 > [!NOTE]
 > **This fork: Paper Shaders × Metal.** All 29 shaders ported to native Metal, with a Swift runtime and a macOS preview app.
 
-![Paper Shaders Metal showcase](./packages/shaders-metal-swift/assets/preview.gif)
+![Paper Shaders Metal showcase](https://raw.githubusercontent.com/l0kyurue1/paper-shaders-metal/main/assets/preview.gif)
 
 - [`packages/shaders-metal`](./packages/shaders-metal) — TypeScript toolchain that converts the web shaders to `.metal` + manifest, plus an MCP server for agent-driven param control
 - [`packages/shaders-metal-swift`](./packages/shaders-metal-swift) — Swift package (`MTKView` runtime) and the **Paper Shaders Metal** macOS app, golden-tested against the web reference
 
-Install the preview app (macOS 14+, universal binary):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/l0kyurue1/shaders/main/install.sh | bash
-```
+Development happens here; the Swift package and preview app are distributed from
+[**l0kyurue1/paper-shaders-metal**](https://github.com/l0kyurue1/paper-shaders-metal)
+(SPM install, app releases, `install.sh`), mirrored via `scripts/export-release.sh`.
 
 Eight of the 29 shaders, rendered by the same runtime:
-![Shader effects rendered offscreen](./packages/shaders-metal-swift/assets/preview-metal.gif)
+![Shader effects rendered offscreen](https://raw.githubusercontent.com/l0kyurue1/paper-shaders-metal/main/assets/preview-metal.gif)
 
 Everything below is the upstream README.
 
