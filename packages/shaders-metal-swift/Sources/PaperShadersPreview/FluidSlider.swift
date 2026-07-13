@@ -20,14 +20,8 @@ struct FluidSlider<V: BinaryFloatingPoint>: View {
     private let dot: CGFloat = 16
     private let inset: CGFloat = 1  // dot rides just inside the track edge
 
-    /// resizeLeftRight is deprecated in macOS 15; columnResize is its smaller replacement.
-    private var resizeCursor: NSCursor {
-        if #available(macOS 15.0, *) {
-            NSCursor.columnResize(directions: .all)
-        } else {
-            NSCursor.resizeLeftRight
-        }
-    }
+    // resizeLeftRight over columnResize: the CI SDK lacks the macOS 15 symbol at compile time
+    private var resizeCursor: NSCursor { .resizeLeftRight }
 
     var body: some View {
         GeometryReader { geo in
