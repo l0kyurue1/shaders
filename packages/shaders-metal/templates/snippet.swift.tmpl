@@ -1,0 +1,21 @@
+// Install via Swift Package Manager:
+// Xcode -> File -> Add Package Dependencies... -> https://github.com/l0kyurue1/shaders
+//
+//     .package(url: "https://github.com/l0kyurue1/shaders", from: "0.0.1")
+//     .product(name: "PaperShadersMetal", package: "shaders")
+//
+// macOS 14+ / iOS 17+.
+
+import SwiftUI
+import PaperShadersMetal
+
+struct __TYPE_NAME__Preview: View {
+    var body: some View {
+        ShaderView(
+            shaderID: "__SHADER_ID__",
+            params: [
+__PARAMS__
+            ]
+        )
+    }
+}

@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, copyFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { extractShaders, extractVertexShader } from './extract.ts';
@@ -17,6 +17,7 @@ export type BuildSummary = {
 export async function buildAll(distDir: string): Promise<BuildSummary> {
   await rm(distDir, { recursive: true, force: true });
   await mkdir(distDir, { recursive: true });
+  await copyFile(join(import.meta.dir, '../templates/snippet.swift.tmpl'), join(distDir, 'snippet.swift.tmpl'));
   const workDir = await mkdtemp(join(tmpdir(), 'shaders-metal-work-'));
   const shaders = await extractShaders();
 

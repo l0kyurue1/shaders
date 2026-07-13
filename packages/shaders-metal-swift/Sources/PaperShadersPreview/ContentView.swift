@@ -214,53 +214,19 @@ struct ShaderPane: View {
     }
 
     private func swiftUISnippet() -> String {
+        let url = distURL.appendingPathComponent("snippet.swift.tmpl")
+        guard let template = try? String(contentsOf: url, encoding: .utf8) else {
+            return "// template missing — rebuild dist"
+        }
         let params = model?.sessionParams() ?? [:]
         let typeName = entry.name.components(separatedBy: CharacterSet.alphanumerics.inverted).joined()
-        let literal = params.keys.sorted()
-            .map { "        \"\($0)\": \(Self.swiftLiteral(params[$0]!)),\n" }
-            .joined()
-        return """
-        // Paper Shaders Metal — \(entry.name) (`\(entry.id)`)
-        // Add the package: Xcode ▸ File ▸ Add Package Dependencies…
-        //   .package(url: "https://github.com/paper-design/shaders", branch: "main")   // product: "PaperShadersMetal"
-        // Ship the shader's build artifacts (dist/manifest.json + \(entry.id).metal) with your app,
-        // or point PAPER_SHADERS_DIST at them.
-
-        import SwiftUI
-        import Metal
-        import PaperShadersMetal
-
-        struct \(typeName)ShaderView: View {
-            @State private var renderer: ShaderRenderer?
-
-            // Name-keyed params (manifest vocabulary): enums as label strings, colors as hex.
-            private static let params: [String: JSONValue] = [
-        \(literal)    ]
-
-            var body: some View {
-                Group {
-                    if let renderer {
-                        ShaderView(renderer: renderer)
-                    } else {
-                        Color.black.task { try? build() }
-                    }
-                }
-            }
-
-            private func build() throws {
-                let distURL = URL(fileURLWithPath:
-                    ProcessInfo.processInfo.environment["PAPER_SHADERS_DIST"] ?? "dist")
-                let manifest = try Manifest.load(distURL: distURL)
-                guard let entry = manifest.shaders.first(where: { $0.id == "\(entry.id)" }),
-                      let device = MTLCreateSystemDefaultDevice() else { return }
-                let r = try ShaderRenderer(device: device, entry: entry, distURL: distURL)
-                let (values, speed) = SessionCodec.decode(Self.params, entry: entry)
-                r.params.merge(values) { _, new in new }
-                if let speed { r.clock.speed = speed }
-                renderer = r
-            }
-        }
-        """
+        let dict = params.keys.sorted()
+            .map { "                \"\($0)\": \(Self.swiftLiteral(params[$0]!))," }
+            .joined(separator: "\n")
+        return template
+            .replacingOccurrences(of: "__TYPE_NAME__", with: typeName)
+            .replacingOccurrences(of: "__SHADER_ID__", with: entry.id)
+            .replacingOccurrences(of: "__PARAMS__", with: dict.isEmpty ? "                :" : dict)
     }
 
     // Emits plain JSON-shaped literals — JSONValue's literal conformances make
